@@ -1,10 +1,29 @@
 import type { NextPage } from 'next';
+import Image from 'next/image';
+import Container from '../components/Container';
 
 const Home: NextPage = () => {
   return (
-    <div>
-      <h1 className='text-3xl font-bold text-red-600 underline'>Hello This is My blog!</h1>
-    </div>
+    <Container>
+      <div>
+        <section className='mt-6 mb-20 flex items-center justify-between'>
+          <div>
+            <p className='font-bold text-teal-400'>Hi, my name is</p>
+            <p className='my-2 text-4xl font-extrabold text-slate-200'>Hyemin Chae</p>
+            <p className='text-2xl font-extrabold text-slate-400'>Frontend Developer</p>
+            <p className='my-2 text-lg font-extrabold text-slate-400'>
+              who believes "Done is better than Perfect"
+            </p>
+          </div>
+          <div className='animate-bounce'>
+            <Image alt='hyemin chae' src='/logo.png' height={176} width={176} />
+          </div>
+        </section>
+        <section>
+          <h3 className='text-4xl font-extrabold text-slate-200'>Recent Posts</h3>
+        </section>
+      </div>
+    </Container>
   );
 };
 
