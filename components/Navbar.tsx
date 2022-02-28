@@ -8,7 +8,7 @@ export default function Navbar() {
           <a className='text-2xl font-extrabold text-teal-400'>Hyemin Chae</a>
         </Link>
         <Link href='/blog'>
-          <a className='text-xl font-bold text-slate-300'>Blog</a>
+          <a className='text-xl font-bold text-slate-200'>Blog</a>
         </Link>
       </div>
     </nav>

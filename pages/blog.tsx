@@ -3,38 +3,63 @@ import path from 'path';
 import matter from 'gray-matter';
 import Link from 'next/link';
 import Image from 'next/image';
+import Container from '../components/Container';
+import React, { useState } from 'react';
+import PostCard from '../components/PostCard';
 
 export default function Blog({ posts }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleTermChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setSearchTerm(value);
+  };
+
+  const filteredPosts = posts.filter((post) =>
+    post.frontMatter.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  console.log(posts);
+
   return (
-    <div className='mt-5'>
-      {posts.map((post, index) => (
-        <Link href={'/blog/' + post.slug} passHref key={index}>
-          <div className='card pointer mb-3' style={{ maxWidth: '540px' }}>
-            <div className='row g-0'>
-              <div className='col-md-8'>
-                <div className='card-body'>
-                  <h5 className='card-title'>{post.frontMatter.title}</h5>
-                  <p className='card-text'>{post.frontMatter.description}</p>
-                  <p className='card-text'>
-                    <small className='text-muted'>{post.frontMatter.date}</small>
-                  </p>
-                </div>
-              </div>
-              <div className='col-md-4 m-auto'>
-                <Image
-                  src={post.frontMatter.thumbnailUrl}
-                  className='img-fluid rounded-start mt-1'
-                  alt='thumbnail'
-                  width={500}
-                  height={400}
-                  objectFit='cover'
-                />
-              </div>
-            </div>
-          </div>
-        </Link>
-      ))}
-    </div>
+    <Container title='Blog | dkssyddico'>
+      <div className='mt-2'>
+        <h1 className='mb-10 text-4xl font-extrabold text-slate-200'>All Posts</h1>
+        <div className='my-10'>
+          <input
+            className='block w-full rounded-md bg-slate-700 px-4 py-2 text-slate-200 outline-none focus:ring-2 focus:ring-teal-400'
+            placeholder='Search articles'
+            onChange={handleTermChange}
+            type='text'
+          />
+        </div>
+        <section>
+          {!searchTerm &&
+            posts.map((post, index) => (
+              <PostCard
+                key={index}
+                title={post.frontMatter.title}
+                description={post.frontMatter.description}
+                slug={post.slug}
+                date={post.frontMatter.date}
+                tags={post.frontMatter.tags}
+              />
+            ))}
+          {!filteredPosts.length && <p className='text-slate-200'>No posts found.</p>}
+          {searchTerm &&
+            filteredPosts.map((post, index) => (
+              <PostCard
+                key={index}
+                title={post.frontMatter.title}
+                description={post.frontMatter.description}
+                slug={post.slug}
+                date={post.frontMatter.date}
+                tags={post.frontMatter.tags}
+              />
+            ))}
+        </section>
+      </div>
+    </Container>
   );
 }
 export const getStaticProps = async () => {
