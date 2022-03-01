@@ -1,8 +1,10 @@
 import type { NextPage } from 'next';
 import Image from 'next/image';
 import Container from '../components/Container';
+import PostCard from '../components/PostCard';
+import { getAllFilesFrontMatter } from '../lib/mdx';
 
-const Home: NextPage = () => {
+const Home: NextPage = ({ posts }) => {
   return (
     <Container>
       <div>
@@ -20,7 +22,19 @@ const Home: NextPage = () => {
           </div>
         </section>
         <section>
-          <h3 className='text-4xl font-extrabold text-slate-200'>Recent Posts</h3>
+          <h3 className='mb-8 text-4xl font-extrabold text-slate-200'>Recent Posts</h3>
+          <div>
+            {posts.slice(0, 3).map((post, index) => (
+              <PostCard
+                key={index}
+                title={post.frontMatter.title}
+                description={post.frontMatter.description}
+                slug={post.slug}
+                date={post.frontMatter.date}
+                tags={post.frontMatter.tags}
+              />
+            ))}
+          </div>
         </section>
       </div>
     </Container>
@@ -28,3 +42,12 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getStaticProps = () => {
+  const posts = getAllFilesFrontMatter();
+  return {
+    props: {
+      posts,
+    },
+  };
+};

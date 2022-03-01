@@ -1,11 +1,10 @@
+import React, { useState } from 'react';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import Link from 'next/link';
-import Image from 'next/image';
 import Container from '../components/Container';
-import React, { useState } from 'react';
 import PostCard from '../components/PostCard';
+import { getAllFilesFrontMatter } from '../lib/mdx';
 
 export default function Blog({ posts }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,8 +17,6 @@ export default function Blog({ posts }) {
   const filteredPosts = posts.filter((post) =>
     post.frontMatter.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  console.log(posts);
 
   return (
     <Container title='Blog | dkssyddico'>
@@ -62,16 +59,8 @@ export default function Blog({ posts }) {
     </Container>
   );
 }
-export const getStaticProps = async () => {
-  const files = fs.readdirSync(path.join('data', 'blog'));
-  const posts = files.map((filename) => {
-    const markdownWithMeta = fs.readFileSync(path.join('data', 'blog', filename), 'utf-8');
-    const { data: frontMatter } = matter(markdownWithMeta);
-    return {
-      frontMatter,
-      slug: filename.split('.')[0],
-    };
-  });
+export const getStaticProps = () => {
+  const posts = getAllFilesFrontMatter();
 
   return {
     props: {

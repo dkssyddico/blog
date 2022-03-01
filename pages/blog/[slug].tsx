@@ -1,32 +1,25 @@
-import { serialize } from 'next-mdx-remote/serialize';
-import { MDXRemote } from 'next-mdx-remote';
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
-import SyntaxHighlighter from 'react-syntax-highlighter';
-import Button from '../../components/Button';
+import Container from '../../components/Container';
+import { getAllBlogPath, getMDXfileBySlug } from '../../lib/mdx';
+import { MDXLayoutRenderer } from '../../components/MDXcomponent';
 
-const PostPage = ({ frontMatter: { title }, mdxSource }) => {
+const PostPage = ({ code, frontmatter: { title, date } }) => {
   return (
-    <div className='mt-4'>
-      <h1 className='text-teal-700'>{title}</h1>
-      <div className='prose max-w-none'>
-        <MDXRemote {...mdxSource} components={{ Button, SyntaxHighlighter }} />
+    <Container>
+      <div className='mb-8'>
+        <h1 className='mb-8 text-4xl font-extrabold text-slate-200'>{title}</h1>
+        <p className='text-slate-300'>{date}</p>
       </div>
-    </div>
+      <section className='prose mb-10 max-w-none'>
+        <MDXLayoutRenderer code={code} />
+      </section>
+    </Container>
   );
 };
 
 export default PostPage;
 
-export const getStaticPaths = async () => {
-  const files = fs.readdirSync(path.join('data', 'blog'));
-  const paths = files.map((filename) => ({
-    params: {
-      slug: filename.replace('.mdx', ''),
-    },
-  }));
-
+export const getStaticPaths = () => {
+  const paths = getAllBlogPath();
   return {
     paths,
     fallback: false,
@@ -34,15 +27,12 @@ export const getStaticPaths = async () => {
 };
 
 export const getStaticProps = async ({ params: { slug } }) => {
-  const markdownWithMeta = fs.readFileSync(path.join('data', 'blog', slug + '.mdx'), 'utf-8');
-  const { data: frontMatter, content } = matter(markdownWithMeta);
-  const mdxSource = await serialize(content);
+  const { code, frontmatter } = await getMDXfileBySlug(slug);
 
   return {
     props: {
-      frontMatter,
-      slug,
-      mdxSource,
+      code,
+      frontmatter,
     },
   };
 };

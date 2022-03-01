@@ -1,33 +1,42 @@
 ---
-title: 'SolidJS: A Beginners Guide'
-date: 'September 11, 2021'
-description: "Here's an introduction to SolidJS"
-thumbnailUrl: "/solidjs-thumbnail.jpeg"
-tags: ['JavaScript', 'solidjs']
+title: Sample .md file
+date: '2016-03-08'
+tags: ['markdown', 'code', 'features']
+draft: false
+summary: Example of a markdown file with code blocks and syntax highlighting
 ---
-<div>
-  This is a blog post about <strong>SolidJS</strong>. <br/>
-  We'll learn about SolidJS and how to build with it.
-</div>
 
-<br/>
+A sample post with markdown.
 
-### This is a Markdown sub-heading
-We just used a `###` subheading in our blog post.
+## Inline Highlighting
 
-<SyntaxHighlighter language="javascript">
-  {`
-    const doStuff = () => {
-      return console.log('hey')
-    }
-  `}
-</SyntaxHighlighter>
+Sample of inline highlighting `sum = parseInt(num1) + parseInt(num2)`
 
-```
-  // this is a code block
-  const doSomething = () => {
-    return console.log('hey')
-  }
+## Code Blocks
+
+Some Javascript code
+
+<Image alt='ocean' src='/static/images/logo.png' width={256} height={256} />
+
+this is my first image.
+
+```javascript:hello.js
+var num1, num2, sum;
+num1 = prompt('Enter first number');
+num2 = prompt('Enter second number');
+sum = parseInt(num1) + parseInt(num2); // "+" means "add"
+alert('Sum = ' + sum); // "+" means combine into a string
 ```
 
-<div>Here, I'm using a component inside my MarkDown file: {<Button text={"Click me"}/>}</div>
+Some Python code 🐍
+
+```python:python.py
+def fib():
+    a, b = 0, 1
+    while True:            # First iteration:
+        yield a            # yield 0 to start with and then
+        a, b = b, a + b    # a will now be 1, and b will also be 1, (0 + 1)
+
+for index, fibonacci_number in zip(range(10), fib()):
+     print('{i:3}: {f:3}'.format(i=index, f=fibonacci_number))
+```
