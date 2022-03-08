@@ -15,7 +15,7 @@ export default function Navbar() {
         <div>
           <Link href='/blog'>
             <a
-              className={`text-xl font-bold text-slate-200 ${
+              className={`text-xl font-bold text-slate-200 transition hover:text-slate-400 ${
                 router.pathname === '/blog' ? 'text-slate-400' : ''
               } `}
             >
@@ -24,7 +24,7 @@ export default function Navbar() {
           </Link>
           <Link href='/projects'>
             <a
-              className={`ml-8 text-xl font-bold text-slate-200 ${
+              className={`ml-8 text-xl font-bold text-slate-200 transition hover:text-slate-400 ${
                 router.pathname === '/projects' ? 'text-slate-400' : ''
               } `}
             >

@@ -4,7 +4,7 @@ import { MDXLayoutRenderer } from '../../components/MDXcomponent';
 
 const PostPage = ({ code, frontmatter: { title, date } }) => {
   return (
-    <Container>
+    <Container title={title}>
       <div className='mb-8'>
         <h1 className='mb-8 text-4xl font-extrabold text-slate-200'>{title}</h1>
         <p className='text-slate-300'>{date}</p>
