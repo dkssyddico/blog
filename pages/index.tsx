@@ -1,10 +1,9 @@
-import type { NextPage } from 'next';
 import Image from 'next/image';
 import Container from '../components/Container';
 import PostCard from '../components/PostCard';
 import { getAllFilesFrontMatter } from '../lib/mdx';
 
-const Home: NextPage = ({ posts }) => {
+const Home = ({ posts }) => {
   return (
     <Container>
       <div>
