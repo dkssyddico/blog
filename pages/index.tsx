@@ -14,7 +14,7 @@ const Home: NextPage = ({ posts }) => {
             <p className='my-2 text-4xl font-extrabold text-slate-200'>Hyemin Chae</p>
             <p className='text-2xl font-extrabold text-slate-400'>Frontend Developer</p>
             <p className='my-2 text-lg font-extrabold text-slate-400'>
-              who believes "Done is better than Perfect"
+              who believes "Done is better than perfect"
             </p>
           </div>
           <div className='animate-bounce'>
