@@ -5,7 +5,7 @@ export default function Navbar() {
   const router = useRouter();
 
   return (
-    <nav className='mx-auto max-w-3xl py-10'>
+    <nav className='mx-auto max-w-4xl px-8 py-10'>
       <div className='flex items-center justify-between'>
         <div>
           <Link href='/'>

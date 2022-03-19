@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
-    <footer className='mx-auto max-w-3xl border-t-2 border-slate-400 py-10'>
-      <div className='flex flex-col items-center'>
+    <footer className='mx-auto max-w-4xl px-8'>
+      <div className='flex flex-col items-center border-t-2 border-slate-400 py-10'>
         <div className='mb-4 flex cursor-pointer space-x-4'>
           <div>
             <a href='mailto:dkssyddico@naver.com'>

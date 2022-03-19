@@ -12,7 +12,7 @@ export default function Container(props) {
     <div className='bg-gray-900'>
       <SEO title={meta.title} />
       <Navbar />
-      <main className='mx-auto min-h-screen max-w-3xl py-4'>{children}</main>
+      <main className='mx-auto min-h-screen max-w-4xl px-8 py-4'>{children}</main>
       <Footer />
     </div>
   );
