@@ -1,8 +1,9 @@
+import { ContainerProps } from '../lib/types';
 import Footer from './Footer';
 import Navbar from './Navbar';
 import SEO from './SEO';
 
-export default function Container(props) {
+export default function Container(props: ContainerProps) {
   const { children, ...customMeta } = props;
   const meta = {
     title: 'Hyemin Chae',

@@ -2,8 +2,9 @@ import Image from 'next/image';
 import Container from '../components/Container';
 import PostCard from '../components/PostCard';
 import { getAllFilesFrontMatter } from '../lib/mdx';
+import { PostsProps } from '../lib/types';
 
-const Home = ({ posts }) => {
+const Home = ({ posts }: PostsProps) => {
   return (
     <Container>
       <div>

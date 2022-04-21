@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import { PostCardProps } from '../lib/types';
 
-export default function PostCard({ date, description, title, slug, tags }) {
+export default function PostCard({ date, description, title, slug, tags }: PostCardProps) {
   return (
     <Link href={'/blog/' + slug} passHref>
       <a>

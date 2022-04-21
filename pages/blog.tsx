@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
 import Container from '../components/Container';
 import PostCard from '../components/PostCard';
 import { getAllFilesFrontMatter } from '../lib/mdx';
+import { PostsProps } from '../lib/types';
 
-export default function Blog({ posts }) {
+export default function Blog({ posts }: PostsProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleTermChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +59,6 @@ export default function Blog({ posts }) {
 }
 export const getStaticProps = () => {
   const posts = getAllFilesFrontMatter();
-
   return {
     props: {
       posts,
