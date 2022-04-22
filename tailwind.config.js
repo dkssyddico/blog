@@ -11,7 +11,7 @@ module.exports = {
               fontWeight: '600',
             },
             strong: {
-              color: theme('colors.slate.200'),
+              color: theme('colors.teal.400'),
             },
             code: {
               color: theme('colors.slate.200'),
