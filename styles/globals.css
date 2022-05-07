@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .prose :not(pre) > code {
-  @apply rounded-lg border border-gray-100 bg-gray-100 px-1 py-0.5 text-gray-800;
+  @apply mx-1 rounded-lg border border-gray-100 bg-gray-100 px-1 py-0.5 text-gray-800;
 }
 
 /**

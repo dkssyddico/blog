@@ -5,9 +5,9 @@ module.exports = {
       typography: (theme) => ({
         DEFAULT: {
           css: {
-            color: theme('colors.slate.400'),
+            color: theme('colors.slate.300'),
             'h2,h3': {
-              color: theme('colors.slate.300'),
+              color: theme('colors.slate.200'),
               fontWeight: '600',
             },
             strong: {
@@ -18,6 +18,9 @@ module.exports = {
             },
             a: {
               color: theme('colors.teal.400'),
+            },
+            blockquote: {
+              color: theme('colors.white'),
             },
           },
         },

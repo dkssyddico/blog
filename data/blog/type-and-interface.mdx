@@ -1,0 +1,147 @@
+---
+title: 'Type Alias와 Interface를 알아보자'
+date: 'May 7, 2022'
+description: 'TypeScript에서 쓰이는 Type Alias와 interface에 대해 알아보는 글입니다.'
+tags: ['TypeScript']
+---
+
+TypeScript에서 객체 타입을 정의할 때 Type Alias와 Interface 중 어느 것을 쓰는게 좋은걸까?
+
+객체 타입을 정의하는데 한해서는 둘 다 비슷해 보이기 때문에 차이점이 궁금했다.
+
+그래서 이번 포스팅에서는 Type Alias와 interface에 대해 비교해보려고 한다.
+
+## Type Alias와 interface는 무엇인가
+
+### Type Alias
+
+Type Alias는 한국어로는 타입 별칭이라고 한다.
+
+정의하고자 하는 타입에 특정 이름을 만들어서 타입을 정의하는 것이 Type Alias다.
+
+```TypeScript:TypeAnnotation.ts
+const a:string = 'hi';
+```
+
+위처럼 직접 타입을 써주는 것은 Type Annotation인데, Type Alias는 한 번 정의해두면 같은 타입을 여러 번 쓰고 싶을 때 유용하다는 장점이 있다.
+
+```TypeScript:TypeAlias.ts
+type Name = string;
+
+const studentA:Name = 'min';
+const studentB:Name = 'hyemin';
+```
+
+Type Alias는 객체에 대한 타입 정의도 가능하다.
+
+```TypeScript
+type Student = {
+  name: string;
+  age: number;
+}
+
+const min:Student = {
+  name: 'min',
+  age: 20
+}
+```
+
+이외에도 union type을 정의할 때도 쓸 수 있다.
+
+```TypeScript
+type Color = 'red' | 'blue';
+```
+
+### Interface
+
+Interface는 객체 타입에 이름을 정하는 다른 방식이다.
+
+```TypeScript
+interface Student {
+  name: string;
+  age: number;
+}
+
+const min:Student = {
+  name: 'min',
+  age: 20
+}
+```
+
+## Type Alias와 interface의 차이점
+
+### 1. 정의할 수 있는 타입
+
+Interface는 **객체에만** 사용이 가능하지만, Type Alias는 원하는 모든 타입에 사용이 가능하다.
+
+### 2. 확장하는 방법
+
+Interface와 Type Alias는 둘 다 확장이 가능하지만, 방법에 차이가 있다.
+
+interface는 `extends`를 이용해 확장한다.
+
+```TypeScript
+interface Student {
+  name: string;
+}
+
+interface GeniusStudent extends Student {
+  IQ: number
+}
+```
+
+interface는 같은 이름을 사용해 property를 새로 추가할 수도 있다. 이를 Declaration Merging, 선언 병합이라고 한다.
+
+```TypeScript
+interface Student {
+  name: string;
+}
+
+interface Student {
+  IQ: number
+}
+```
+
+이러한 점 때문에 Interface는 **항상 확장가능하다**.
+
+Type Alias는 `&`를 통해 확장한다.
+
+```TypeScript
+type Student = {
+  name: string;
+}
+
+type GeniusStudent = Student & {
+    IQ: number
+}
+```
+
+Type Alias는 같은 이름을 재사용할 수 없다. 재사용하면 `Duplicate identifier Error`라고 알려준다.
+
+## 그래서 어느 걸 사용해야하나.
+
+TypeScript 사용이 늘어날수록 객체 타입을 정의할 때 Interface와 Type Alias 중에서도 어떤 것을 쓸 것인지 고민이 많았다.
+
+둘을 비교해놓은 글들을 보면 주로 interface를 쓰는게 좋겠다는 의견들이 많았다.
+
+그리고 [공식 문서](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#differences-between-type-aliases-and-interfaces)를 살펴보면
+
+> For the most part, you can choose based on personal preference, and TypeScript will tell you if it needs something to be the other kind of declaration. If you would like a heuristic, use interface until you need to use features from type.
+
+대부분 개인적인 선호도에 따라 선택하면 되고, TypeScript도 선언의 다른 종류가 되기 위해 필요한 것이 있다면 알려줄 것이라고도 한다.
+
+type에서 기능을 사용할 필요가 있기 전까지 간단하게 사용할 거라면 interface를 쓰면 된다고도 나와있다.
+
+이 블로그에 한해서는 Type Alias를 이용했는데, 이유는 블로그에서 필요한 데이터들은 그다지 확장성이 필요하지 않았기 때문이다.
+
+처음에 블로그를 만들 때부터 필요한 데이터의 종류가 정해져 있다고 생각했고, 데이터의 종류와 타입을 속박하고 다른 곳에서는 따로 이용하지 않겠다는 의미에서 Type Alias를 사용했다.
+
+결론적으로는 공식문서에도 나와있듯이 Type Alias나 Interface 중 어느 것을 사용해도 무방하다고 생각한다. 객체 타입을 정의하는 것에서는 같은 기능을 하기 때문이다.
+
+하지만 협업을 할 경우나 프로젝트의 성격에 따라서는 둘의 특성을 고려해서 어떤 것을 사용할 것인지 통일해서 일관성있게 사용하는 것이 좋을 것 같다.
+
+## Reference
+
+- [공식 문서](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases)
+- [https://yceffort.kr/2021/03/typescript-interface-vs-type](https://yceffort.kr/2021/03/typescript-interface-vs-type)
+- [https://medium.com/humanscape-tech/type-vs-interface-%EC%96%B8%EC%A0%9C-%EC%96%B4%EB%96%BB%EA%B2%8C-f36499b0de50](https://medium.com/humanscape-tech/type-vs-interface-%EC%96%B8%EC%A0%9C-%EC%96%B4%EB%96%BB%EA%B2%8C-f36499b0de50)
