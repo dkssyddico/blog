@@ -1,0 +1,145 @@
+---
+title: 'CORS 해결하기'
+date: 'May 8, 2022'
+description: '사이드 프로젝트에서 마주한 CORS와 해결 방법에 대한 글입니다.'
+tags: ['Web', 'CORS']
+---
+
+이번에는 풀스택으로 사이드 프로젝트를 만들다 마주한 CORS와 해결 방법을 다뤄보려고 한다.
+
+프론트엔드는 React.js와 Axios를, 백엔드에서는 Node.js, Express를 사용했다.
+
+문제의 CORS 오류는 프론트엔드에서 백엔드와 통신하여 API 데이터를 받아오려고 할 때 아래와 같이 나타났다.
+
+![](/static/images/posts/cors.png)
+
+## CORS란?
+
+CORS는 Cross Origin Resource Sharing의 줄임말로, 한국어로는 교차 출처 리소스 공유라고 한다.
+
+MDN에서 [CORS 설명](https://developer.mozilla.org/ko/docs/Web/HTTP/CORS)을 보면 아래와 같다.
+
+> 교차 출처 리소스 공유(Cross-Origin Resource Sharing, CORS)는 추가 HTTP 헤더를 사용하여, 한 출처에서 실행 중인 웹 애플리케이션이 다른 출처의 선택한 자원에 접근할 수 있는 권한을 부여하도록 브라우저에 알려주는 체제입니다. 웹 애플리케이션은 리소스가 자신의 출처(도메인, 프로토콜, 포트)와 다를 때 교차 출처 HTTP 요청을 실행합니다.
+
+![](/static/images/posts/cors.png)
+
+위에 에러 메세지랑 함께 CORS를 쉽게 풀어봤다.
+
+"http://localhost:3001이 http://localhost:4000에서 데이터를 받아오려고 하는데 지금 URL들의 **출처**가 다르잖아?
+
+원래 **브라우저의 동일 출처 정책**을 따라야해서 같은 프로토콜, 포트, 호스트를 쓰는 출처에서 데이터를 받아와야 하거든?
+
+다른 출처에서 데이터를 좀 더 안전하게 받아오고 싶으면 CORS에 맞는 접근 권한을 설정해줘!"
+
+### 출처란?
+
+출처는 URL에서도 프로토콜, 호스트, 포트를 합친 것을 의미한다.
+
+예를 들어 https://www.google.com:443/search?q=cors URL 구조를 보면 다음과 같이 나눌 수 있다.
+
+- 프로토콜: https
+- 호스트: www.google.com
+- 포트: 443 - 생략 가능함(https는 443, http는 80를 주로 이용)
+- 경로: /search
+- 쿼리 파라미터: q=cors
+
+여기서 **프로토콜**, **호스트**, **포트**가 같아야 동일한 출처라고 할 수 있다.
+
+http://localhost:3001와 http://localhost:4000를 비교하면 포트가 다르니 브라우저는 다른 출처라고 하는 것이다.
+
+### SOP
+
+SOP는 Same-Origin Policy로 **동일 출처 정책**이다.
+
+MDN [SOP](https://developer.mozilla.org/ko/docs/Web/Security/Same-origin_policy) 설명을 보면 아래와 같다.
+
+> 동일 출처 정책(same-origin policy)은 어떤 출처에서 불러온 문서나 스크립트가 다른 출처에서 가져온 리소스와 상호작용하는 것을 제한하는 중요한 보안 방식입니다. 동일 출처 정책은 잠재적으로 해로울 수 있는 문서를 분리함으로써 공격받을 수 있는 경로를 줄여줍니다.
+
+에러 메세지에서 나온 `XMLHttpRequest`가 동일 출처 정책을 따르고 있기 때문에 오류가 난 것이다.
+
+<br />
+
+## 해결방법
+
+CORS 오류를 해결하기 위해선 브라우저가 다른 출처에서 온 리소스를 받아들일 수 있도록 설명해주는 **HTTP Header**를 프론트엔드, 백엔드 코드에 모두 추가해주어야 한다.
+
+React, Axios와 Node.js, Express를 쓰는 환경에서 해결한 방법은 다음과 같다.
+
+### Axios 해결 방법
+
+axios의 `withCredentials: true` 설정을 전역적으로 해주거나 요청을 하는 곳에서만 설정해주는 방법이 있다.
+
+```js
+const httpClient = axios.create({
+  baseURL: 'http://localhost:4000',
+  withCredentials: true,
+});
+```
+
+요청하는 곳에서만 아래와 같이 설정한다. 자세한 내용은 [axios 문서](https://www.npmjs.com/package/axios)를 참고하면 된다.
+
+```js
+const data = await axios.get('http://localhost:4000', { withCredentials: true });
+```
+
+🍪 만약 프론트엔드와 백엔드에서 쿠키를 주고받는다면 꼭 처리를 해줘야 한다. 🍪
+
+### Node.js 해결 방법
+
+두 가지 방법이 있다. 직접 응답 헤더에 설정해주는 방법과 cors 모듈을 통해 해결하는 것이다.
+
+#### 1. 응답 헤더 설정
+
+```js
+res.setHeader('Access-Control-Allow-origin', 'http://localhost:3001');
+res.setHeader('Access-Control-Allow-Credentials', 'true'); // 쿠키 주고받기 허용
+```
+
+Access-Control-Allow-origin에서는 보안을 위해 프론트에서 쓰는 출처만 명시하자.
+
+와일드카드('\*')로 설정한 경우는 아래와 같은 오류가 난다.
+
+Access to XMLHttpRequest at 'http://localhost:4000/api/' from origin 'http://localhost:3001' has
+been blocked by CORS policy: The value of the 'Access-Control-Allow-Origin' header in the response
+must not be the wildcard '\*' when the request's credentials mode is 'include'. The credentials
+mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribute.
+
+#### 2. [cors 모듈](https://www.npmjs.com/package/cors)
+
+```shell
+npm i cors
+```
+
+npm으로 cors 모듈을 설치해주고
+
+```js
+app.use(cors({ origin: 'http://localhost:3001', credentials: true }));
+```
+
+출처 옵션을 적어주고 credentials을 true로 해주는 것이 기본적인 해결 방법이다.
+
+origin은 [Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin)를 헤더에 설정해준다.
+
+credentials은 [Access-Control-Allow-Credentials](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Credentials)를 헤더에 설정해주는 옵션이다. 이것도 쿠키를 브라우저 서버간 주고받을 때 꼭 설정해야 하는 옵션이다.
+
+이외에도 프록시 서버를 설정하는 방법도 있다.
+
+서버와 서버간 통신은 CORS 문제가 일어나지 않는다는 것을 이용한 방법이라고 한다.
+
+## 마치며
+
+단순히 리액트만 사용하면서 axios를 통해 외부 API 데이터를 받아올 때는 분명 문제가 없었는데, 혼자 사이드를 하면서 데이터나 쿠키를 주고 받으면서 CORS 에러가 처음 생겼을 때 무척 당황했던 기억이 새록새록 난다.
+
+당시 CORS를 해결하기 위해 여러 글을 참고하면서 CORS는 프론트엔드 개발자에게 꼭 필요한 지식임이 분명해보였다.
+
+위에 언급한 방법으로 문제를 해결했지는 꽤 됐지만 지식 정리를 위해 글을 써봤다.
+
+궁금한 점은 현업에서는 CORS 이슈를 어떻게 해결할까인데 나중에 기회가 된다면 현업 코드를 꼭 보고 싶다.
+
+## Reference
+
+- [CORS - MDN](https://developer.mozilla.org/ko/docs/Web/HTTP/CORS)
+- [https://inpa.tistory.com/entry/WEB-%F0%9F%93%9A-CORS-%F0%9F%92%AF-%EC%A0%95%EB%A6%AC-%ED%95%B4%EA%B2%B0-%EB%B0%A9%EB%B2%95-%F0%9F%91%8F](https://inpa.tistory.com/entry/WEB-%F0%9F%93%9A-CORS-%F0%9F%92%AF-%EC%A0%95%EB%A6%AC-%ED%95%B4%EA%B2%B0-%EB%B0%A9%EB%B2%95-%F0%9F%91%8F)
+- [https://evan-moon.github.io/2020/05/21/about-cors/#sopsame-origin-policy](https://evan-moon.github.io/2020/05/21/about-cors/#sopsame-origin-policy)
+- [https://beomy.github.io/tech/browser/cors/#%ED%94%84%EB%A1%9D%EC%8B%9C-%EC%84%9C%EB%B2%84](https://beomy.github.io/tech/browser/cors/#%ED%94%84%EB%A1%9D%EC%8B%9C-%EC%84%9C%EB%B2%84)
+- [https://www.zerocho.com/category/NodeJS/post/5e9bf5b18dcb9c001f36b275](https://www.zerocho.com/category/NodeJS/post/5e9bf5b18dcb9c001f36b275)

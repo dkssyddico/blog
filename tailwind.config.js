@@ -6,7 +6,7 @@ module.exports = {
         DEFAULT: {
           css: {
             color: theme('colors.slate.300'),
-            'h2,h3': {
+            'h2,h3,h4': {
               color: theme('colors.slate.200'),
               fontWeight: '600',
             },
