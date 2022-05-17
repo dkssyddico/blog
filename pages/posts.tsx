@@ -58,7 +58,9 @@ export default function Posts({ posts }: PostsProps) {
   );
 }
 export const getStaticProps = () => {
-  const posts = getAllFilesFrontMatter();
+  const posts = getAllFilesFrontMatter().sort(
+    (a, b) => Number(new Date(b.frontMatter.date)) - Number(new Date(a.frontMatter.date))
+  );
   return {
     props: {
       posts,
