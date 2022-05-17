@@ -1,6 +1,7 @@
 import Container from '../../components/Container';
 import { getAllBlogPath, getMDXfileBySlug } from '../../lib/mdx';
 import { MDXLayoutRenderer } from '../../components/MDXcomponent';
+import GiscusZone from '../../components/GiscusZone';
 
 const PostPage = ({ code, frontmatter: { title, date } }) => {
   return (
@@ -12,6 +13,7 @@ const PostPage = ({ code, frontmatter: { title, date } }) => {
       <section className='prose mb-10 max-w-none'>
         <MDXLayoutRenderer code={code} />
       </section>
+      <GiscusZone term={title} />
     </Container>
   );
 };
