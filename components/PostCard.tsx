@@ -3,7 +3,7 @@ import { PostCardProps } from '../lib/types';
 
 export default function PostCard({ date, description, title, slug, tags }: PostCardProps) {
   return (
-    <Link href={'/blog/' + slug} passHref>
+    <Link href={'/posts/' + slug} passHref>
       <a>
         <div className='mb-10 rounded-md bg-slate-700 p-6 transition hover:bg-slate-600'>
           <p className='mb-3 text-xs text-slate-300'>{date}</p>

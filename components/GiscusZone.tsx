@@ -1,4 +1,5 @@
 import Giscus from '@giscus/react';
+import { siteMetadata } from '../data/siteMetadata';
 
 type GiscusZoneProp = {
   term: string;
@@ -10,9 +11,9 @@ export default function GiscusZone({ term }: GiscusZoneProp) {
       <Giscus
         id='comments'
         repo='dkssyddico/blog'
-        repoId={process.env.NEXT_PUBLIC_GISCUS_REPO_ID}
-        category='General'
-        categoryId={process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID}
+        repoId={siteMetadata.comment.giscusConfig.repositoryId}
+        category={siteMetadata.comment.giscusConfig.category}
+        categoryId={siteMetadata.comment.giscusConfig.categoryId}
         mapping='specific'
         term={term}
         reactionsEnabled='1'

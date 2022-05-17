@@ -24,7 +24,7 @@ const Home = ({ posts }: PostsProps) => {
         <section>
           <h3 className='mb-8 text-4xl font-extrabold text-slate-200'>Recent Posts</h3>
           <div>
-            {posts.slice(0, 3).map((post, index) => (
+            {posts.map((post, index) => (
               <PostCard
                 key={index}
                 title={post.frontMatter.title}
@@ -45,9 +45,13 @@ export default Home;
 
 export const getStaticProps = () => {
   const posts = getAllFilesFrontMatter();
+  const recentPosts = posts
+    .sort((a, b) => Number(new Date(b.frontMatter.date)) - Number(new Date(a.frontMatter.date)))
+    .slice(0, 3);
+
   return {
     props: {
-      posts,
+      posts: recentPosts,
     },
   };
 };

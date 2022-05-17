@@ -2,7 +2,7 @@ import Container from '../components/Container';
 
 export default function Projects() {
   return (
-    <Container title='Projects | dkssyddico'>
+    <Container title="Projects | Hyemin's blog">
       <div className='mt-2'>
         <h1 className='mb-10 text-4xl font-extrabold text-slate-200'>Projects</h1>
         <section className='my-10'>

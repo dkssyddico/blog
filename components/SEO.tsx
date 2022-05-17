@@ -15,20 +15,14 @@ export default function SEO({ title }: SEOProps) {
       <meta property='og:type' content='website' />
       <meta property='og:url' content='https://example.com/page.html' />
       <meta property='og:title' content={title} />
-      <meta
-        property='og:image'
-        content='https://blog-sable-pi-51.vercel.app/static/images/logo.png'
-      />
+      <meta property='og:image' content={siteMetadata.socialBanner} />
       <meta property='og:description' content={siteMetadata.description} />
       <meta property='og:site_name' content={siteMetadata.title} />
       <meta name='twitter:card' content='summary_large_image' />
       <meta name='twitter:site' content='@site_account' />
       <meta name='twitter:title' content={title} />
       <meta name='twitter:description' content={siteMetadata.description} />
-      <meta
-        name='twitter:image'
-        content='https://blog-sable-pi-51.vercel.app/static/images/logo.png'
-      />
+      <meta name='twitter:image' content={siteMetadata.socialBanner} />
       <link rel='canonical' href='' />
     </Head>
   );

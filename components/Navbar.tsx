@@ -13,13 +13,13 @@ export default function Navbar() {
           </Link>
         </div>
         <div>
-          <Link href='/blog'>
+          <Link href='/posts'>
             <a
               className={`text-xl font-bold text-slate-200 transition hover:text-slate-400 ${
-                router.pathname === '/blog' ? 'text-slate-400' : ''
+                router.pathname === '/posts' ? 'text-slate-400' : ''
               } `}
             >
-              Blog
+              Posts
             </a>
           </Link>
           <Link href='/projects'>

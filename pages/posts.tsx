@@ -4,7 +4,7 @@ import PostCard from '../components/PostCard';
 import { getAllFilesFrontMatter } from '../lib/mdx';
 import { PostsProps } from '../lib/types';
 
-export default function Blog({ posts }: PostsProps) {
+export default function Posts({ posts }: PostsProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleTermChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,7 +17,7 @@ export default function Blog({ posts }: PostsProps) {
   );
 
   return (
-    <Container title='Blog | dkssyddico'>
+    <Container title="Posts | Hyemin's blog">
       <div className='mt-2'>
         <h1 className='mb-10 text-4xl font-extrabold text-slate-200'>All Posts</h1>
         <div className='my-10'>
