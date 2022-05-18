@@ -29,16 +29,7 @@ export const getMDXfileBySlug = async (slug) => {
     source,
     xdmOptions(options, frontMatter) {
       options.remarkPlugins = [...(options.remarkPlugins ?? [])];
-      options.rehypePlugins = [
-        ...(options.rehypePlugins ?? []),
-        rehypeSlug,
-        rehypeAutolinkHeadings,
-        rehypeKatex,
-        rehypeCodeTitles,
-        rehypeCitation,
-        [rehypePrismPlus, { ignoreMissing: true }],
-        rehypePresetMinify,
-      ];
+      options.rehypePlugins = [...(options.rehypePlugins ?? []), rehypeSlug, rehypeAutolinkHeadings, rehypeKatex, rehypeCodeTitles, rehypeCitation, [rehypePrismPlus, { ignoreMissing: true }], rehypePresetMinify];
       return options;
     },
   });

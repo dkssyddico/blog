@@ -1,0 +1,344 @@
+---
+title: 이벤트 버블링과 캡처링 그리고 이벤트 위임을 알아보자
+date: '2022-5-17'
+description: '이벤트 버블링, 캡쳐링과 이벤트 위임에 대해 알아보는 글입니다.'
+tags: ['Browser', 'JavaScript']
+---
+
+이번 포스팅에서는 이벤트 버블링와 캡처링, 그리고 이벤트 위임에 대해서 알아보겠습니다.
+
+## 이벤트란
+
+> Events are actions or occurrences that happen in the system you are programming, which the system tells you about so
+> your code can react to them.
+
+MDN에서 이벤트란 우리가 프로그래밍하는 시스템에서 일어나는 사건 또는 발생으로, 우리의 코드가 (사건 또는 발생에) 반응할수
+있도록 시스템이 말해주는 것이라고 합니다.
+
+예를 들어, 특정 버튼을 클릭하게 되면 시스템은 우리에게 클릭 이벤트가 발생했다고 알려주고, 이에 따라 우리는 버튼 색상이나
+버튼의 단어를 변경할 수도 있는 것입니다.
+
+모든 HTML Element는 `EventTarget`이라는 인터페이스를 상속받기 때문에 어떤 이벤트가 발생하는지를 알 수 있고, 이에 대한 처
+리를 하는 이벤트 핸들러를 등록할 수 있습니다.
+
+그런데 특정 이벤트를 들어야 하는 element는 보통 다른 element에 중첩되어 있는 경우가 많습니다.
+
+그리고 다른 element에도 이벤트가 등록되어 있을 수도 있습니다.
+
+이때 일어날 수 있는 것이 이벤트 버블링, 이벤트 캡처링입니다.
+
+## 이벤트 버블링(event bubbling)
+
+이벤트 버블링은 바다 속에서 뽀글뽀글 올라오는 거품(bubble)을 생각하면 이해하기 쉽습니다.
+
+![](/static/images/posts/seaBubble.jpg)
+
+거품이 올라오는 것처럼 중첩된 element들에 각각 이벤트들이 있다면 가장 아래에 있는 element에 있는 이벤트가 발생해 핸들러
+가 동작하고, 이어서 부모 element의 이벤트가 발생해 핸들러가 동작하고, 가장 상위의 부모 요소까지 올라와서 이 과정이 반복
+되면 비로소 끝이 납니다.
+
+예시 코드를 보면 이렇습니다.
+
+```HTML:eventBubbling.html
+  <body>
+    <div class="outer">
+      <div class="middle">
+        <button>Click Me</button>
+      </div>
+    </div>
+    <script>
+      const outer = document.querySelector('.outer');
+      const middle = document.querySelector('.middle');
+      const button = document.querySelector('button');
+
+      outer.addEventListener('click', (event) => {
+        console.log("I'm outer div");
+      });
+
+      middle.addEventListener('click', (event) => {
+        console.log("I'm middle div");
+      });
+
+      button.addEventListener('click', (event) => {
+        console.log("I'm button");
+      });
+    </script>
+  </body>
+```
+
+버튼을 클릭하고 콘솔창을 보면 <u>I'm button ➡️ I'm middle div ➡️ I'm outer div</u> 순으로 로그가 찍히는 것을 볼 수 있습
+니다.
+
+1. 가장 아래쪽의 button 이벤트 핸들러가 동작함
+2. button을 감싼 middle div의 이벤트 핸들러가 동작함
+3. middle div를 감싸는 outer div의 이벤트 핸들러가 동작함
+
+이러한 흐름을 `이벤트 버블링`이라고 볼 수 있습니다.
+
+### event.target와 event.currentTarget
+
+`event.target`을 이용해 어디서 이벤트가 발생했는지 정확히 파악할 수 있습니다.
+
+여기서 주의할 점은 `event.currentTarget`과 잘 구분해야합니다.
+
+`event.target`은 **실제로 이벤트가 발생한 대상 객체**를 가리키는 반면, `currentTarget`은 **이벤트 핸들러가 부착되어 있는
+객체** 를 가리킵니다.
+
+```html
+<body>
+  <div class="outer">
+    <div class="middle">
+      <button>Click Me</button>
+    </div>
+  </div>
+  <script>
+    const outer = document.querySelector('.outer');
+    const middle = document.querySelector('.middle');
+    const button = document.querySelector('button');
+
+    outer.addEventListener('click', (event) => {
+      console.log("I'm outer div");
+      console.log('event.target', event.target, 'event.currentTarget', event.currentTarget);
+    });
+
+    middle.addEventListener('click', (event) => {
+      console.log("I'm middle div");
+      console.log('event.target', event.target, 'event.currentTarget', event.currentTarget);
+    });
+
+    button.addEventListener('click', (event) => {
+      console.log("I'm button");
+      console.log('event.target', event.target, 'event.currentTarget', event.currentTarget);
+    });
+  </script>
+</body>
+```
+
+위 코드에서 버튼을 클릭해보면
+
+![](/static/images/posts/eventTarget.png)
+
+위에서 언급한대로 event.target은 실제 클릭 이벤트가 발생한 button element를 가리키지만, middle div와 outer div 또한 이벤
+트가 부착되어 있기 때문에 currentTarget은 각자 다른 요소를 가리키는 것을 볼 수 있습니다.
+
+### 버블링 막기
+
+2가지 방법이 있습니다.
+
+첫번째는 **`event.stopPropagation()`을 이용**하는 것입니다.
+
+```html
+<script>
+  const outer = document.querySelector('.outer');
+  const middle = document.querySelector('.middle');
+  const button = document.querySelector('button');
+
+  outer.addEventListener('click', (event) => {
+    console.log("I'm outer div");
+  });
+
+  middle.addEventListener('click', (event) => {
+    console.log("I'm middle div");
+  });
+
+  button.addEventListener('click', (event) => {
+    console.log("I'm button");
+    event.stopPropagation();
+  });
+</script>
+```
+
+버튼을 클릭하면 더 이상 middle div와 outer div의 클릭 이벤트의 핸들러가 동작하지 않는 것을 확인할 수 있습니다.
+
+하지만 [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Event/stopPropagation)에서 나와있듯이
+`stopPropagation()`은 이벤트 발생으로 일어나는 가장 기본적인 동작까지 억제할 수 있기 때문에 권하고 싶은 방법은 아닙니다.
+
+그리고 다른 element의 이벤트가 중요할 수도 있으니 정말 꼭 필요한 것이 아닌 이상 억지로 방지하는 것은 좋은 방법이 아닐 수
+있습니다.
+
+두번째 방법은 위에서 살펴본 **`event.currentTarget`과 `event.target`의 차이를 이용**하는 것입니다.
+
+즉, 실제 이벤트가 발생하는 element에서만 이벤트가 발생할 수 있게 해주는 것입니다.
+
+```html
+<script>
+  const outer = document.querySelector('.outer');
+  const middle = document.querySelector('.middle');
+  const button = document.querySelector('button');
+
+  outer.addEventListener('click', (event) => {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+    console.log("I'm outer div");
+  });
+
+  middle.addEventListener('click', (event) => {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+    console.log("I'm middle div");
+  });
+
+  button.addEventListener('click', (event) => {
+    console.log("I'm button");
+  });
+</script>
+```
+
+## 이벤트 캡처링(event capturing)
+
+캡처링은 버블링과 반대라고 생각하면 이해하기 쉽습니다.
+
+캡처링은 부모 element부터 가장 자식 element까지의 이벤트들을 확인하고 동작시키는 과정입니다.
+
+그렇다면 위의 코드에서 버튼을 클릭했을 때 outer div가 가장 위에 있는데 이벤트 핸들러가 동작하지 않았을까요?
+
+addEventListener에서는 capture 옵션을 false로 기본 설정해뒀기 때문입니다.
+
+```html
+<script>
+  const outer = document.querySelector('.outer');
+  const middle = document.querySelector('.middle');
+  const button = document.querySelector('button');
+
+  outer.addEventListener(
+    'click',
+    (event) => {
+      console.log("I'm outer div");
+    },
+    { capture: true }
+  );
+
+  middle.addEventListener(
+    'click',
+    (event) => {
+      console.log("I'm middle div");
+    },
+    { capture: true }
+  );
+
+  button.addEventListener(
+    'click',
+    (event) => {
+      console.log("I'm button");
+    },
+    { capture: true }
+  );
+</script>
+```
+
+outer div와 middle div에 모두 capture를 true로 설정하면
+
+위에 버블링 코드와는 반대로 <u>I'm outer ➡️ I'm middle ➡️ I'm button</u>으로 이벤트 핸들러가 동작하는 것을 볼 수 있었습
+니다.
+
+이벤트 캡처링에 대한 글이나 강의를 보면 실제로 이벤트 캡처링을 활용하는 단계는 많지 않다고 합니다.
+
+<p>
+  왜 그럴까 생각해봤는데, 실제로 발생시키고 싶은 이벤트가 있는 element가 있는데 캡쳐링때문에 부모 element에서 막힌다면
+  번거로울 것 같으니 캡처링을 활용하는 경우는 별로 없을 것 같습니다.
+</p>
+
+그리고 [모던 자바스크립트 버블링 캡처링편](https://ko.javascript.info/bubbling-and-capturing)에서는 캡처링 단계를 잘 활
+용하지 않는 경우를 다음과 같이 설명합니다.
+
+> 캡처링 단계는 거의 쓰이지 않고, 주로 버블링 단계의 이벤트만 다뤄집니다. 이렇게 된 데는 논리적 배경이 있습니다. 현실에
+> 서 사고가 발생하면 지역 경찰이 먼저 사고를 조사합니다. 그 지역에 대해 가장 잘 아는 기관은 지역 경찰이기 때문입니다 .
+> 추가 조사가 필요하다면 그 이후에 상위 기관이 사건을 넘겨받습니다. 이벤트 핸들러도 이와 같은 논리로 만들어졌습니다. 특
+> 정 요소에 할당된 핸들러는 그 요소에 대한 자세한 사항과 무슨 일을 해야할지 가장 잘 알고 있습니다. `<td>`에 할당된 핸들
+> 러는 `<td>`에 대한 모든 것을 알고 있기 때문에 `<td>`를 다루는데 가장 적합합니다. 따라서 `<td>`를 다룰 기회를 이 요소에
+> 할당된 핸들러에게 가장 먼저 주는 것입니다.
+
+## 이벤트 위임(event delegation)
+
+이벤트 버블링과 캡처링을 이해해야 **이벤트 위임**을 이해하고 구현할 수 있습니다.
+
+<p>
+  이벤트 위임은 여러 자식 element들이 있는 부모 element에 하나의 이벤트 핸들러만 등록해도 그 모든 자식 element를 다룰 수
+  있는 이벤트 패턴입니다.
+</p>
+
+예시 코드를 보겠습니다.
+
+```html
+<body>
+  <div class="answerContainer">
+    <p class="answer" data-id="1">저는 1번 선택지입니다.</p>
+    <p class="answer" data-id="2">저는 2번 선택지입니다.</p>
+  </div>
+  <script>
+    const answerContainer = document.querySelector('.answerContainer');
+
+    function handleAnswerClick(event) {
+      const { id } = event.target.dataset;
+      console.log(id);
+    }
+
+    answerContainer.addEventListener('click', handleAnswerClick);
+  </script>
+</body>
+```
+
+<p>
+  answer element가 선택하는 요소이지만 이 둘에 이벤트를 등록해주는 것이 아니라 부모 요소인 answerContainer에 원하는
+  이벤트 를 등록해주면 됩니다.
+</p>
+
+그리고 event.target으로 어디서 이벤트가 일어나는지 알 수 있습니다.
+
+이제 만약 선택지 element가 늘어난다고 해도 이미 부모에 이벤트 핸들러가 있더라도 몇번이고 선택지를 추가할 수 있습니다.
+
+이처럼 이벤트 위임의 장점은 비슷한 element에 각각 핸들러를 적용할 필요가 없으니 코드와 메모리가 절약된다는 것이라고 할수
+있습니다.
+
+<p>
+  그리고 [모던 자바스크립트 이벤트 위임편](https://ko.javascript.info/event-delegation)에서 나온 이벤트 위임의 단점을
+  보겠습니다.
+</p>
+
+<p>
+  - 이벤트 위임을 사용하려면 이벤트가 반드시 버블링 되어야 합니다. 하지만 몇몇 이벤트는 버블링 되지 않습니다. 그리고
+  낮은 레벨에 할당한 핸들러엔 event.stopPropagation()를 쓸 수 없습니다.
+</p>
+
+<p>
+  - 컨테이너 수준에 할당된 핸들러가 응답할 필요가 있는 이벤트이든 아니든 상관없이 모든 하위 컨테이너에서 발생하는
+  이벤트에 응답해야 하므로 CPU 작업 부하가 늘어날 수 있습니다. 그런데 이런 부하는 무시할만한 수준이므로 실제로는 잘
+  고려하지 않습니다.
+</p>
+
+이런 단점들이 있긴 하지만 이벤트 위임 자체는 효율적인 코드를 짤 수 있게 해주는 것이라 알아두면 좋다고 생각합니다.
+
+실제로 심리 테스트를 만드는 토이 프로젝트를 하면서 선택지를 고르는 코드를 짜면서 이벤트 위임을 활용한 적이 있습니다.
+
+```JavaScript
+const answerContainer = document.querySelector('.survey__answerContainer');
+
+const handleAnswerClick = (event) => {
+  let { index, option } = event.target.dataset;
+  if (index) {
+    setTimeout(() => {
+      goNext(parseInt(index) + 1);
+    }, 1000);
+    addType(parseInt(index), option);
+  }
+};
+
+answerContainer.addEventListener('click', handleAnswerClick);
+```
+
+## 마치며
+
+<p>
+  이벤트 버블링과 캡처링은 면접에서도 가끔 물어보는 질문이라고도 하고, 이벤트 위임이라는 패턴을 익히면 실제 코드에서도
+  쓸 수 있기 때문에 꼭 한 번 정리를 하고 싶어서 글을 써봤습니다.
+</p>
+
+## Reference
+
+- [이벤트 입문 - MDN](https://developer.mozilla.org/ko/docs/Learn/JavaScript/Building_blocks/Events)
+- [event.currentTarget - MDN](https://developer.mozilla.org/en-US/docs/Web/API/Event/currentTarget)
+- [stopPropagation](https://developer.mozilla.org/en-US/docs/Web/API/Event/stopPropagation)
+- [버블링과 캡처링](https://ko.javascript.info/bubbling-and-capturing)
+- [이벤트 위임](https://ko.javascript.info/event-delegation)
