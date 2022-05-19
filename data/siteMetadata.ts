@@ -3,7 +3,7 @@ export const siteMetadata = {
   author: 'Hyemin Chae',
   description: "Hyemin's Blog",
   siteUrl: 'https://dkssyddico-blog.vercel.app',
-  socialBanner: '/static/images/siteImg.png',
+  socialBanner: '/main/siteImg.png',
   mail: 'dkssyddico@naver.com',
   github: 'https://github.com/dkssyddico',
   comment: {
