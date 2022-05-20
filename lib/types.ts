@@ -10,6 +10,7 @@ export type PostsProps = {
     frontMatter: FrontMatter;
     slug: string;
   }[];
+  tags: Record<string, number>;
 };
 
 export type PostCardProps = {

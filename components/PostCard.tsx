@@ -10,10 +10,7 @@ export default function PostCard({ date, description, title, slug, tags }: PostC
           <h3 className='mb-5 text-2xl font-semibold text-teal-400'>{title}</h3>
           <div className='mb-6'>
             {tags.map((tag, index) => (
-              <span
-                key={index}
-                className='mr-4 rounded-md bg-teal-400 p-2 text-sm font-bold text-slate-700'
-              >
+              <span key={index} className='mr-4 rounded-md bg-teal-400 px-4 py-2 text-sm font-bold text-slate-700'>
                 {tag}
               </span>
             ))}

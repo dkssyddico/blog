@@ -22,6 +22,19 @@ module.exports = {
             blockquote: {
               color: theme('colors.white'),
             },
+            'code::before': {
+              content: 'none',
+            },
+            'code::after': {
+              content: 'none',
+            },
+            'ol li::marker': {
+              fontWeight: '600',
+              color: theme('colors.slate.200'),
+            },
+            'ul li::marker': {
+              backgroundColor: theme('colors.slate.200'),
+            },
           },
         },
       }),
