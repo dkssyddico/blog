@@ -15,7 +15,7 @@ export default function PostCard({ date, description, title, slug, tags }: PostC
               </span>
             ))}
           </div>
-          <p className='text-lg leading-4 text-slate-300'>{description}</p>
+          <p className='text-lg text-slate-300'>{description}</p>
         </div>
       </a>
     </Link>
