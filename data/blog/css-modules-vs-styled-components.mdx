@@ -1,0 +1,220 @@
+---
+title: '리액트 컴포넌트 스타일링, 무엇을 사용할까: CSS modules vs styled-components'
+date: '2022-5-21'
+description: '리액트 컴포넌트 스타일링에서 사용할 수 있는 CSS modules과 styled-components를 비교하는 글입니다.'
+tags: ['React', 'CSS']
+---
+
+리액트로 사이드를 하면서 반드시 직면했던 문제 중 하나는 "**어느 기술로 스타일링을 할지**"였다.
+
+처음에 내가 접한 리액트 스타일링 방법은 노마드코더의 리액트 강의에서 배운 **styled-components**였다.
+
+styled-components를 사용하는게 사실 편하기도 해서 강의 이후에 리액트로 뭔가를 만들 때마다 무조건적으로 styled-components
+를 사용했는데, 이후 다른 리액트 강의에서 **CSS modules**을 접하고 이후 사이드에서 어떤 것을 써야할 지 고민에 빠졌다.
+
+당시에 꽤 고민을 했던 문제였기도 해서 따로 기록을 해두었는데 다시 한 번 둘을 비교해서 정리할 겸 글을 써본다.
+
+## CSS modules vs styled-components
+
+### CSS modules
+
+CSS modules은 말 그대로 CSS를 모듈화해서 사용하는 것이다.
+
+```JavaScript:SearchBar.js
+import React from 'react'
+import styles from './SearchBar.module.css';
+
+function SearchBar() {
+  return (
+    <nav className={styles.nav}></nav>
+  )
+}
+
+export default SearchBar
+```
+
+[파일명].module.css라고 이름이 지정된 css 파일 또한 필요하다.
+
+```CSS:SearchBar.module.css
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10vh;
+  padding: 6px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  z-index: 1;
+}
+```
+
+```HTML
+<nav class="SearchBar_nav__26BZS"></nav>
+```
+
+<div>
+  파일 이름 + 클래스 이름 + 해쉬값 형태로 종합한 고유한 클래스를 만들어 클래스 이름이 전역적으로 중복되지 않게 해준다.
+</div>
+
+<div>
+  여기서 `console.log(styles)`를 해보면 객체를 전달받는데, css module 내에서 사용한 클래스 이름과 그 이름을 고유화시킨
+  값이 들어있다.
+</div>
+
+```JavaScript
+{ nav: "SearchBar_nav__26BZS" }
+```
+
+파일명 중간에 module이 들어가야 한다는 것 빼고는 css를 쓰는 방법은 기존 css와 같다.
+
+필요하다면 sass를 설치해 [파일명].module.scss(or sass)를 이용할 수도 있다.
+
+<div>
+  조건부 스타일링을 할 때가 조금 까다로운데 [classnames](https://www.npmjs.com/package/classnames) 라는 라이브러리로
+  해결하는 방법이 있고 js에서 조건문으로 처리해줄 수도 있다.
+</div>
+
+css module은 렌더링 시에 모든 css 스타일 요소를 파싱한다.
+
+<div>
+  css module의 장점은 고유한 클래스를 만들어 중복 클래스 이름을 방지해준다는 것, 그리고 JS와 CSS 간 관심사를 분리시킬 수
+  있다는 것이다.
+</div>
+
+하지만 그만큼 css 파일이 많아질 수 있어 관리해야 할 파일이 늘어난다는 것은 단점으로 볼 수 있다.
+
+### styled-components
+
+styled-components는 **CSS-in-JS**에서 대표적인 라이브러리이다.
+
+CSS-in-JS는 자바스크립트에서 css를 작성하는 방식을 말한다.
+
+```JavaScript:TodoContainer.js
+import styled from 'styled-components';
+
+const Main = styled.main`
+  width: 512px;
+  height: 500px;
+  margin: 0 auto;
+  padding: 30px 45px;
+  border-radius: 16px;
+  background-color: ${({ theme }) => theme.colors.bgColor};
+  @media only screen and (min-width: 390px) and (max-width: 767px) {
+    width: 390px;
+    height: 100vh;
+  }
+`;
+
+function TodoContainer() {
+  return (
+    <Main>
+      <AddTodoForm />
+    </Main>
+  );
+}
+```
+
+예시 코드처럼 js 파일 내에서 원하는 이름으로 html 태그에 대응하는 스타일링 컴포넌트를 만들어주면 된다.
+
+<div>
+  css module보다 직관적인 이름을 지어줄 수 있어 코드 가독성도 늘어나고, 재사용이 가능하며, 렌더링 될 때 무작위 클래스
+  이름이 생성되어 클래스 이름 중복을 방지한다.
+</div>
+
+조건부 스타일링의 경우도 해당 컴포넌트에 props을 넣어주는 방식으로 처리하면 되서 css module보다 편하다.
+
+<div>
+  하지만 styled-components 라이브러리를 설치해야해서 번들 크기가 늘어나고 새로운 의존성이 생긴다는 점, js 파일의 코드가
+  길어질 수 있어서 관심사 분리가 어렵다는 점 등이 단점으로 꼽힌다.
+</div>
+
+<div>
+  그리고 styled-components는 퍼포먼스 측면에서도 css module보다 느린데, css module은 자바스크립트 해석 과정이 필요하지
+  않기 때문이다.
+</div>
+
+또한, 스타일링 컴포넌트를 사용했을 때 브라우저는 해당 컴포넌트가 파싱되고 DOM에 추가되었을 때만 그에 대한 스타일 요소를
+로딩하는데, 이게 장점일 수도 있고 단점일 수도 있다.
+
+<div>
+  즉, 사용하기 전에는 불필요한 css 코드를 파싱하지 않지만, 해당 컴포넌트가 형성될 때 css 코드를 파싱하기 때문에 속도가
+  조금 늦어질 수 있다.
+</div>
+
+## 기술 트렌드 살펴보기
+
+<div>
+  [State of CSS 2021](https://2021.stateofcss.com/ko-KR/)을 보면 css module과 styled-components에 대한 사용량과 만족도
+  등 을 볼 수 있다.
+</div>
+
+![](/static/images/posts/css-usage-2021.png)
+
+![](/static/images/posts/css-satisfaction-2021.png)
+
+styled-components가 css module에 비해 사용량은 앞서지만, 만족도면에서는 조금 더 떨어지는 것을 볼 수 있었다.
+
+## 그래서 뭘 써야할까?
+
+사실 정답은 없다. 둘을 비교하는 여러 글들을 봐도 목적이나 상황에 맞게 사용해야 한다는 결론이 대부분이다.
+
+개인이 하는 규모가 작은 토이 프로젝트라면 css module이나 styled-components까지 갈 필요없이 css만 사용할 수도 있다.
+
+<div>
+  내 경우에는 styled-components를 쓰다가 특정 사이드 프로젝트에서는 css module을 사용했는데, js와 css를 분리해서
+  관리하고자 하는 목적이 컸기 때문이다.
+</div>
+
+<div>
+  styled-components를 써본 분들은 아마 공감하실텐데, js 파일에서 styled-components 때문에 은근히 길어지는 코드를 무시할
+  수가 없었다.
+</div>
+
+하지만 css module을 쓰면서도 조건부 스타일링이 필요할 경우에는 styled-components가 더 편하겠구나 라고 생각하기도 했다.
+
+## 마치며
+
+<div>
+  이 글은 두 기술을 비교해 정리하는 글이기도 하고, 무지에서 비롯되었다고는 하지만 한 가지 방법만 알고 그 기술만 사용했던
+  과거의 자신을 반성하는 글이기도 하다.
+</div>
+
+<div>
+  글 초입에도 언급했듯이 styled-components만 알던 시절에 다른 것은 알아보지도 않고(사실은 알아볼 생각도 못 했다..), 다른
+  기술이 있는지도 모른채 리액트 스타일링은 무조건적으로 styled-components만 써야되는 줄 알았다.
+</div>
+
+<div>
+  그러다 다른 강의를 들으면서 css module을 알게 되서 둘 중 어떤 게 내 프로젝트에 도움이 될까 고민도 하게 되었고, 특히
+  드림코딩 유튜브 채널에서 본 [CSS 핫🔥 트렌드 (어떤 라이브러리를 먼저 배우면 좋을까
+  ?](https://www.youtube.com/watch?v=Eim11QYLfEY&t=352s) 영상이 내 인식 전환에 크게 도움이 되었다.
+</div>
+
+<div>
+  영상을 보면서 styled-components가 많이 쓰이긴 하지만 만족도에서는 또 낮은 순위를 차지하기도 했고, 또 다른 기술이
+  styled-components보다 사용량에서 앞선다거나 하는 사실들을 알게 되면서 한 가지 기술만을 아는 것은 조금 위험하다는
+  생각을 했다.
+</div>
+
+<div>
+  결론적으로는 기술은 정말 많고 기술마다 어떤 문제를 해결하고자 하는 목적, 장단점도 서로 다르니 가능하다면 여러 기술을
+  접해보고 본인이나 팀에 맞는 기술을 골라 잘 사용하는 것이 좋을 것 같다.
+</div>
+
+## Reference
+
+- [What are CSS Modules? A visual introduction](https://www.javascriptstuff.com/what-are-css-modules/)
+- [https://www.samsungsds.com/kr/insights/web_component.html](https://www.samsungsds.com/kr/insights/web_component.html)
+- [https://sangmin802.github.io/Study/Think/css-in-css%20&%20css-in-js/](https://sangmin802.github.io/Study/Think/css-in-css%20&%20css-in-js/)
+- [https://velog.io/@syj9484/React-%EB%A6%AC%EB%A0%8C%EB%8D%94%EB%A7%81%EA%B3%BC-%EA%B4%80%EB%A0%A8%ED%95%98%EC%97%AC-%EC%84%B1%EB%8A%A5-%EC%B5%9C%EC%A0%81%ED%99%94-%ED%95%98%EA%B8%B0](https://velog.io/@syj9484/React-%EB%A6%AC%EB%A0%8C%EB%8D%94%EB%A7%81%EA%B3%BC-%EA%B4%80%EB%A0%A8%ED%95%98%EC%97%AC-%EC%84%B1%EB%8A%A5-%EC%B5%9C%EC%A0%81%ED%99%94-%ED%95%98%EA%B8%B0)
+- [https://so-so.dev/web/css-in-js-whats-the-defference/#references](https://so-so.dev/web/css-in-js-whats-the-defference/#references)
+- [https://dev.to/alexsergey/css-modules-vs-css-in-js-who-wins-3n25](https://dev.to/alexsergey/css-modules-vs-css-in-js-who-wins-3n25)
+- [드림코딩: CSS 핫🔥 트렌드 (어떤 라이브러리를 먼저 배우면 좋을까?)](https://www.youtube.com/watch?v=Eim11QYLfEY&t=352s)
+- [https://enlear.academy/is-styled-components-helpful-in-react-68d4a7dde49e](https://enlear.academy/is-styled-components-helpful-in-react-68d4a7dde49e)
+- [https://velog.io/@loocia1910/%EA%B0%9C%EC%9D%B8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%97%90-SASS-CSS-Module-Styled-components-%EC%96%B4%EB%96%A4-%EA%B2%83%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%A0%EA%B9%8C](https://velog.io/@loocia1910/%EA%B0%9C%EC%9D%B8-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8%EC%97%90-SASS-CSS-Module-Styled-components-%EC%96%B4%EB%96%A4-%EA%B2%83%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%A0%EA%B9%8C)
+- [https://2021.stateofcss.com/ko-KR/technologies](https://2021.stateofcss.com/ko-KR/technologies)
+- [https://pustelto.com/blog/css-vs-css-in-js-perf/](https://pustelto.com/blog/css-vs-css-in-js-perf/)
+- [https://blog.toycrane.xyz/css%EC%9D%98-%EC%A7%84%ED%99%94-%EA%B3%BC%EC%A0%95-f7c9b4310ff7](https://blog.toycrane.xyz/css%EC%9D%98-%EC%A7%84%ED%99%94-%EA%B3%BC%EC%A0%95-f7c9b4310ff7)
