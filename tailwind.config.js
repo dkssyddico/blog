@@ -18,6 +18,7 @@ module.exports = {
             },
             a: {
               color: theme('colors.teal.400'),
+              wordBreak: 'break-all',
             },
             blockquote: {
               color: theme('colors.white'),
