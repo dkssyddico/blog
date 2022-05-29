@@ -3,6 +3,7 @@ export type FrontMatter = {
   description: string;
   title: string;
   tags: string[];
+  isDraft: boolean;
 };
 
 export type PostsProps = {

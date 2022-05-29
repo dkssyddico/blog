@@ -13,7 +13,9 @@ const Home = ({ posts }: PostsProps) => {
             <p className='font-bold text-teal-400'>Hi, my name is</p>
             <p className='my-2 text-4xl font-extrabold text-slate-200'>Hyemin Chae</p>
             <p className='text-2xl font-extrabold text-slate-400'>Frontend Developer</p>
-            <p className='my-2 text-lg font-extrabold text-slate-400'>who believes "Done is better than perfect"</p>
+            <p className='my-2 text-lg font-extrabold text-slate-400'>
+              who believes "Done is better than perfect"
+            </p>
           </div>
           <div className='animate-bounce'>
             <Image alt='hyemin chae' src='/logo.png' height={176} width={176} />
@@ -43,7 +45,9 @@ export default Home;
 
 export const getStaticProps = () => {
   const posts = getAllFilesFrontMatter();
+
   const recentPosts = posts
+    .filter((post) => !post.frontMatter.isDraft)
     .sort((a, b) => Number(new Date(b.frontMatter.date)) - Number(new Date(a.frontMatter.date)))
     .slice(0, 3);
 

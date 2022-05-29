@@ -1,6 +1,4 @@
-import { useMemo } from 'react';
 import { bundleMDX } from 'mdx-bundler';
-import { getMDXComponent } from 'mdx-bundler/client';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';

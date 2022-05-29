@@ -94,9 +94,9 @@ export default function Posts({ posts, tags }: PostsProps) {
 }
 
 export const getStaticProps = () => {
-  const posts = getAllFilesFrontMatter().sort(
-    (a, b) => Number(new Date(b.frontMatter.date)) - Number(new Date(a.frontMatter.date))
-  );
+  const posts = getAllFilesFrontMatter()
+    .filter((post) => !post.frontMatter.isDraft)
+    .sort((a, b) => Number(new Date(b.frontMatter.date)) - Number(new Date(a.frontMatter.date)));
   const tags = posts.reduce((a, b) => [...a, ...b.frontMatter.tags], []);
   const sortedTags = { All: posts.length };
 
